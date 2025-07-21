@@ -24,7 +24,7 @@ export const QuizGameSchema = z.object({
     players: z.array(QuizPlayerSchema),
     questions: z.array(QuizQuestionSchema),
     hasStarted: z.boolean(),
-    currentQuestion: z.number(),
+    currentQuestionIndex: z.number(),
 });
 
 export type QuizGame = z.infer<typeof QuizGameSchema>;
@@ -32,7 +32,7 @@ export type QuizGame = z.infer<typeof QuizGameSchema>;
 export const QuizMessageSchema = z.discriminatedUnion("kind", [
     z.object({
         kind: z.literal("ANSWER"),
-        payload: z.number(),
+        payload: z.number().min(0),
     }),
     z.object({
         kind: z.literal("GAME_STATE_UPDATE"),
