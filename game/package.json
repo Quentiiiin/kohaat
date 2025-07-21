@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "socket.io": "^4.8.1",
+    "zod": "^4.0.5"
+  },
+  "name": "game",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
