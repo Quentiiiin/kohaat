@@ -4,7 +4,6 @@ import { sendError } from "./util";
 import { QuizGame } from "./QuizGame";
 import { QuizMaster } from "./QuizMaster";
 import { Hono } from "hono";
-import { validator } from "hono/validator";
 import z from "zod";
 
 const WS_PORT = 4000;
@@ -19,12 +18,13 @@ const io = new Server({
 io.listen(WS_PORT);
 
 const http = new Hono();
-http.post('/create', (c) => {
-    const parsed = z.object({ userId: z.uuid() }).safeParse(c.json);
+http.post('/create', async (c) => {
+    const parsed = z.object({ userId: z.uuid() }).safeParse(await c.req.json());
     if (!parsed.data) return c.text('validation error', 400);
     const game = new QuizGame([q1], io);
     const master = new QuizMaster(parsed.data.userId, game);
     game.master = master;
+    games.push(game);
     return c.json({ gameId: game.id });
 });
 http.get('/game-status/:id', (c) => {

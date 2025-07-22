@@ -2,17 +2,13 @@ import { PUBLIC_GAME_SOCKET_URL } from "$env/static/public";
 import { io, Socket } from "socket.io-client";
 import { QuizMessageSchema, type AuthHandshake, type QuizMessage } from '$shared/schema';
 import { localGameState } from "./game-state.svelte";
-import { browser } from "$app/environment";
 
 let gameSocket: Socket;
 
-function initGame() {
-    const userId = localStorage.getItem('user-id') ?? crypto.randomUUID();
-    localStorage.setItem('user-id', userId);
-    localGameState.userId = userId;
-
+export function initGame() {
     const handshake: AuthHandshake = {
-        userId,
+        kind: 'JOIN',
+        userId: localGameState.userId,
         username: 'Quentin',
         gameId: '123456'
     }
@@ -44,5 +40,3 @@ export function sendMessage(message: QuizMessage) {
 export function submitAnswer(index: number) {
     sendMessage({ kind: 'ANSWER', payload: index });
 }
-
-if (browser) initGame();
