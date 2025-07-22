@@ -4,6 +4,19 @@
     import { localGameState } from "$lib/game-state.svelte";
     import "$lib/socket";
     import { submitAnswer } from "$lib/socket";
+
+    const showButtons = $derived.by(() => {
+        if (!localGameState.state) return false;
+        if (localGameState.state.phase !== "PLAY") return false;
+        if (localGameState.state.questionEndTime < new Date().getTime())
+            return false;
+        const player = localGameState.state.players.find(
+            (p) => p.id === localGameState.userId,
+        );
+        if (!player || player.submittedAnswer) return false;
+        console.log(4);
+        return true;
+    });
 </script>
 
 <div>
@@ -14,9 +27,13 @@
 {/if}
 {JSON.stringify(localGameState.state)}
 
-<AnswerButtons
-    possibleAnswerCount={4}
-    onClick={(i) => {
-        submitAnswer(i);
-    }}
-/>
+{#if showButtons}
+    <AnswerButtons
+        possibleAnswerCount={localGameState.state?.questions[
+            localGameState.state.currentQuestionIndex
+        ].answers.length as 2 | 3 | 4 ?? 4}
+        onClick={(i) => {
+            submitAnswer(i);
+        }}
+    />
+{/if}

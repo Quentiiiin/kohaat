@@ -9,6 +9,7 @@ let gameSocket: Socket;
 function initGame() {
     const userId = localStorage.getItem('user-id') ?? crypto.randomUUID();
     localStorage.setItem('user-id', userId);
+    localGameState.userId = userId;
 
     const handshake: AuthHandshake = {
         userId,
