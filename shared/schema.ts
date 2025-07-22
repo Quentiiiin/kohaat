@@ -37,10 +37,12 @@ export const QuizGameLightSchema = z.object({
 export type QuizGameLight = z.infer<typeof QuizGameLightSchema>;
 
 export const QuizMessageSchema = z.discriminatedUnion("kind", [
+    //client to server
     z.object({
         kind: z.literal("ANSWER"),
-        payload: z.number().min(0).max(3),
+        payload: z.number().min(0).max(3)
     }),
+    //server to client
     z.object({
         kind: z.literal("GAME_STATE_UPDATE"),
         payload: QuizGameLightSchema,
@@ -49,14 +51,37 @@ export const QuizMessageSchema = z.discriminatedUnion("kind", [
         kind: z.literal("ERROR"),
         payload: z.string()
     }),
+    //host/gamemaster to server
+    z.object({
+        kind: z.literal('START_GAME'),
+    }),
+    z.object({
+        kind: z.literal('END_GAME'),
+    }),
+    z.object({
+        kind: z.literal('NEXT_QUESTION'),
+    }),
+    z.object({
+        kind: z.literal('KICK_PLAYER'),
+        payload: z.uuid()
+    })
 ]);
 
 export type QuizMessage = z.infer<typeof QuizMessageSchema>;
 
-export const AuthHandshakeSchema = z.object({
-    userId: z.uuid(),
-    username: z.string().max(16),
-    gameId: z.string().max(6)
-});
+export const AuthHandshakeSchema = z.discriminatedUnion("kind", [
+    z.object({
+        kind: z.literal('JOIN'),
+        userId: z.uuid(),
+        username: z.string().max(16),
+        gameId: z.string().max(6)
+    }),
+    z.object({
+        kind: z.literal('HOST'),
+        userId: z.uuid(),
+        gameId: z.string().max(6).optional() //this parameter is only used when reconnecting to a game
+    })
+
+]);
 
 export type AuthHandshake = z.infer<typeof AuthHandshakeSchema>;

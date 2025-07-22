@@ -1,7 +1,8 @@
 import type { Server, Socket } from "socket.io";
 import type { QuizMessage, QuizPhase, QuizPlayerLight, QuizQuestion } from "../../shared/schema";
 import { QuizPlayer } from "./QuizPlayer";
-import { generateRandomId } from "./util";
+import { generateRandomId, sendError } from "./util";
+import type { QuizMaster } from "./QuizMaster";
 
 export class QuizGame {
     id: string;
@@ -15,6 +16,8 @@ export class QuizGame {
     questionTimeout: NodeJS.Timeout | null = null;
     hasAppliedScores: boolean = false;
 
+    master: QuizMaster | null = null;
+
     constructor(questions: QuizQuestion[], io: Server) {
         this.id = '123456' //generateRandomId();
         this.questions = questions;
@@ -23,13 +26,14 @@ export class QuizGame {
 
     addPlayer(name: string, id: string, socket: Socket) {
         this.players.push(new QuizPlayer(name, id, this, socket));
-        if(this.players.length > 1) {
+        if (this.players.length > 1) {
             this.start();
         }
         this.updateGameState();
     }
 
     start() {
+        if (!this.master) return; //dont start game without a quizmaster
         this.phase = 'PLAY';
         this.nextQuestion();
     }
@@ -54,6 +58,14 @@ export class QuizGame {
         this.questionTimeout = setTimeout(() => {
             this.nextQuestion();
         }, 1000 * 10);
+        this.updateGameState();
+    }
+
+    end() {
+        if (!this.hasAppliedScores) this.applyScores;
+        this.questionTimeout?.close();
+
+        this.phase = 'END';
         this.updateGameState();
     }
 
@@ -120,5 +132,16 @@ export class QuizGame {
             }
         }
         this.io.to(this.id).emit("game", JSON.stringify(message));
+    }
+
+    kick(userId: string) {
+        const player = this.players.find(p => p.id === userId);
+        if (!player) return;
+        this.players = this.players.filter(p => p.id !== player.id);
+        if (player.socket) {
+            sendError(player.socket, 'player got kicked by the host');
+            player.socket?.disconnect(true);
+        }
+        this.updateGameState();
     }
 }
