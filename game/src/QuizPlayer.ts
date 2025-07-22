@@ -9,6 +9,7 @@ export class QuizPlayer {
     game: QuizGame;
     score: number = 0;
     answers: number[] = [];
+    answerTimeDeltas: number[] = []; //answer time in ms
 
     constructor(name: string, id: string, game: QuizGame, socket: Socket) {
         this.id = id;
@@ -37,7 +38,7 @@ export class QuizPlayer {
             }
             if (parsed.kind === 'ANSWER') {
                 const res = this.submitAnswer(parsed.payload);
-                if(res) sendError(socket, res);
+                if (res) sendError(socket, res);
             }
         });
     }
@@ -67,6 +68,10 @@ export class QuizPlayer {
         if (answerIndex > currentQuestion.answers.length - 1) return 'invalid answer index';
 
         this.answers[this.game.currentQuestionIndex] = answerIndex;
+
+        const delta = new Date().getTime() - this.game.questionStartTime;
+        this.answerTimeDeltas[this.game.currentQuestionIndex] = delta;
+        console.log(this.name, "answered in", delta, "ms")
         this.game.updateGameState();
         return null;
     }
