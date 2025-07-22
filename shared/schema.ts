@@ -8,28 +8,33 @@ export const QuizQuestionSchema = z.object({
 
 export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
 
-export const QuizPlayerSchema = z.object({
+export const QuizPhaseSchema = z.enum(['WAITING', 'PLAY', 'END']);
+
+export type QuizPhase = z.infer<typeof QuizPhaseSchema>;
+
+// player and game schema are only used for client and transmission
+// classes are used for the authoritative game state on the server
+// the Light suffix indicates that they are not the real deal
+export const QuizPlayerLightSchema = z.object({
     id: z.string(),
     name: z.string().max(16),
-    givenAnswers: z.array(z.number()),
-    answerTimeDelta: z.array(z.number()),
-    isConnected: z.boolean(),
     score: z.number(),
-    submittedAnswer: z.boolean().optional()
+    submittedAnswer: z.boolean()
 });
 
-export type QuizPlayer = z.infer<typeof QuizPlayerSchema>;
+export type QuizPlayerLight = z.infer<typeof QuizPlayerLightSchema>;
 
-export const QuizGameSchema = z.object({
+export const QuizGameLightSchema = z.object({
     id: z.string().max(6),
-    players: z.array(QuizPlayerSchema),
-    questions: z.array(QuizQuestionSchema),
-    hasStarted: z.boolean(),
+    players: z.array(QuizPlayerLightSchema),
+    phase: QuizPhaseSchema,
+    questionEndTime: z.number(),
     currentQuestionIndex: z.number(),
-    questionEndTime: z.number().optional()
+    questions: z.array(QuizQuestionSchema),
+    totalQuestions: z.number()
 });
 
-export type QuizGame = z.infer<typeof QuizGameSchema>;
+export type QuizGameLight = z.infer<typeof QuizGameLightSchema>;
 
 export const QuizMessageSchema = z.discriminatedUnion("kind", [
     z.object({
@@ -38,7 +43,7 @@ export const QuizMessageSchema = z.discriminatedUnion("kind", [
     }),
     z.object({
         kind: z.literal("GAME_STATE_UPDATE"),
-        payload: QuizGameSchema,
+        payload: QuizGameLightSchema,
     }),
     z.object({
         kind: z.literal("ERROR"),
@@ -55,7 +60,3 @@ export const AuthHandshakeSchema = z.object({
 });
 
 export type AuthHandshake = z.infer<typeof AuthHandshakeSchema>;
-
-export const QuizPhaseSchema = z.enum(['WAITING','PLAY','END']);
-
-export type QuizPhase = z.infer<typeof QuizPhaseSchema>;
