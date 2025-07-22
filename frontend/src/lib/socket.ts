@@ -20,22 +20,28 @@ function initGame() {
         auth: handshake
     });
 
+    gameSocket.on("connect", () => localGameState.connected = true);
+    gameSocket.on("disconnect", () => localGameState.connected = false);
+
     gameSocket.on("game", (m) => {
         const j = JSON.parse(m);
         const parsedMessage = QuizMessageSchema.parse(j);
         if (parsedMessage.kind === 'GAME_STATE_UPDATE') {
             console.log('gamestate updated')
             localGameState.state = parsedMessage.payload;
-        } else if(parsedMessage.kind === 'ERROR') {
+        } else if (parsedMessage.kind === 'ERROR') {
             console.error('Error received from socket:', parsedMessage.payload);
         }
     });
 }
 
 
-
 export function sendMessage(message: QuizMessage) {
     gameSocket.emit("game", JSON.stringify(message));
 }
 
-if(browser) initGame();
+export function submitAnswer(index: number) {
+    sendMessage({ kind: 'ANSWER', payload: index });
+}
+
+if (browser) initGame();

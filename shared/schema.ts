@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const QuizQuestionSchema = z.object({
     question: z.string(),
-    answers: z.array(z.string()),
+    answers: z.array(z.string()).min(2).max(4),
     correctAnswer: z.number().optional(),
 });
 
@@ -15,6 +15,7 @@ export const QuizPlayerSchema = z.object({
     answerTimeDelta: z.array(z.number()),
     isConnected: z.boolean(),
     score: z.number(),
+    submittedAnswer: z.boolean().optional()
 });
 
 export type QuizPlayer = z.infer<typeof QuizPlayerSchema>;
@@ -25,6 +26,7 @@ export const QuizGameSchema = z.object({
     questions: z.array(QuizQuestionSchema),
     hasStarted: z.boolean(),
     currentQuestionIndex: z.number(),
+    questionEndTime: z.number().optional()
 });
 
 export type QuizGame = z.infer<typeof QuizGameSchema>;
@@ -32,7 +34,7 @@ export type QuizGame = z.infer<typeof QuizGameSchema>;
 export const QuizMessageSchema = z.discriminatedUnion("kind", [
     z.object({
         kind: z.literal("ANSWER"),
-        payload: z.number().min(0),
+        payload: z.number().min(0).max(3),
     }),
     z.object({
         kind: z.literal("GAME_STATE_UPDATE"),
@@ -53,3 +55,7 @@ export const AuthHandshakeSchema = z.object({
 });
 
 export type AuthHandshake = z.infer<typeof AuthHandshakeSchema>;
+
+export const QuizPhaseSchema = z.enum(['WAITING','PLAY','END']);
+
+export type QuizPhase = z.infer<typeof QuizPhaseSchema>;
