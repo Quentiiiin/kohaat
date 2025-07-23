@@ -19,16 +19,13 @@ export class QuizGame {
     master: QuizMaster | null = null;
 
     constructor(questions: QuizQuestion[], io: Server) {
-        this.id = '123456' //generateRandomId();
+        this.id = generateRandomId();
         this.questions = questions;
         this.io = io;
     }
 
     addPlayer(name: string, id: string, socket: Socket) {
         this.players.push(new QuizPlayer(name, id, this, socket));
-        if (this.players.length > 1) {
-            this.start();
-        }
         this.updateGameState();
     }
 
@@ -139,7 +136,10 @@ export class QuizGame {
         if (!player) return;
         this.players = this.players.filter(p => p.id !== player.id);
         if (player.socket) {
-            sendError(player.socket, 'player got kicked by the host');
+            const message: QuizMessage = {
+                kind: 'PLAYER_KICKED'
+            }
+            player.socket.emit("game", JSON.stringify(message));
             player.socket?.disconnect(true);
         }
         this.updateGameState();

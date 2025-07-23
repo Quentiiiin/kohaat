@@ -27,10 +27,18 @@ http.post('/create', async (c) => {
     games.push(game);
     return c.json({ gameId: game.id });
 });
-http.get('/game-status/:id', (c) => {
-    const game = games.find(g => g.id === c.req.param('id'));
+http.get('/game-status/:gameId/:userId?', (c) => {
+    const game = games.find(g => g.id === c.req.param('gameId'));
     if (!game) return c.text('game not found', 404);
-    return c.json({ phase: game.phase });
+    const userId = c.req.param('userId')
+    if (!userId) {
+        return c.json({ phase: game.phase });
+    }
+    const userFound = game.players.find(p => p.id === userId) ? true : false;
+    return c.json({
+        phase: game.phase,
+        userFound
+    });
 });
 
 

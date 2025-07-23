@@ -2,16 +2,27 @@ import { PUBLIC_GAME_SOCKET_URL } from "$env/static/public";
 import { io, Socket } from "socket.io-client";
 import { QuizMessageSchema, type AuthHandshake, type QuizMessage } from '$shared/schema';
 import { localGameState } from "./game-state.svelte";
+import { goto } from "$app/navigation";
+import { tick } from "svelte";
 
 let gameSocket: Socket;
 
-export function initGame() {
-    const handshake: AuthHandshake = {
+
+export async function initGame(master: boolean, gameId: string, username?: string) {
+    await tick(); //!!Important, or else the userId wont be loaded yet
+    const handshakePlayer: AuthHandshake = {
         kind: 'JOIN',
         userId: localGameState.userId,
-        username: 'Quentin',
-        gameId: '123456'
+        username: username ?? 'default',
+        gameId
     }
+
+    const handshakeMaster: AuthHandshake = {
+        kind: 'HOST',
+        userId: localGameState.userId,
+        gameId
+    }
+    const handshake = master ? handshakeMaster : handshakePlayer;
 
     gameSocket = io(PUBLIC_GAME_SOCKET_URL, {
         auth: handshake
@@ -28,6 +39,8 @@ export function initGame() {
             localGameState.state = parsedMessage.payload;
         } else if (parsedMessage.kind === 'ERROR') {
             console.error('Error received from socket:', parsedMessage.payload);
+        } else if (parsedMessage.kind === 'PLAYER_KICKED') {
+            goto('/');
         }
     });
 }

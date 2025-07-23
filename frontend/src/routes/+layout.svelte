@@ -1,16 +1,18 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount, type Snippet } from "svelte";
 	import "../app.css";
-    import { localGameState } from "$lib/game-state.svelte";
+	import { localGameState } from "$lib/game-state.svelte";
+	import type { LayoutData } from "./$types";
 
-	let { children } = $props();
+	interface Props {
+		children: Snippet<[]>;
+		data: LayoutData;
+	}
+
+	let { children, data }: Props = $props();
 
 	onMount(() => {
-		console.log('mount')
-		const userId = localStorage.getItem("user-id") ?? crypto.randomUUID();
-		localStorage.setItem("user-id", userId);
-		localGameState.userId = userId;
-		console.log(userId);
+		localGameState.userId = data.userId;
 	});
 </script>
 

@@ -51,6 +51,9 @@ export const QuizMessageSchema = z.discriminatedUnion("kind", [
         kind: z.literal("ERROR"),
         payload: z.string()
     }),
+    z.object({
+        kind: z.literal("PLAYER_KICKED"),
+    }),
     //host/gamemaster to server
     z.object({
         kind: z.literal('START_GAME'),

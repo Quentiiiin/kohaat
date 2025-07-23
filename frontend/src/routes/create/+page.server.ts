@@ -15,6 +15,6 @@ export const actions = {
         const json = await res.json();
         const gameId = await json.gameId;
 
-        redirect(303, '/' + gameId);
+        redirect(303, '/master/' + gameId);
     }
 } satisfies Actions;
