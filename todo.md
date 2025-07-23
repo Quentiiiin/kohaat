@@ -5,4 +5,4 @@ TODO:
 - timer logic
 - robust rejoin logic: done
 - question loading
-- game creation
+- game creation: done

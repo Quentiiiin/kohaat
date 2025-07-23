@@ -43,6 +43,16 @@ export async function initGame(master: boolean, gameId: string, username?: strin
             goto('/');
         }
     });
+
+    setInterval(() => {
+        const start = Date.now();
+
+        gameSocket.emit("ping", () => {
+            const duration = Date.now() - start;
+            localGameState.latency = duration;
+        });
+    }, 1000 * 10);
+
 }
 
 

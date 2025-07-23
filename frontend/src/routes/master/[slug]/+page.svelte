@@ -33,7 +33,7 @@
 {#if localGameState.state?.questionEndTime}
     <Timer endTime={localGameState.state.questionEndTime} />
 {/if}
-{JSON.stringify(localGameState.state)}
+{JSON.stringify(localGameState)}
 
 {#if showButtons}
     <AnswerButtons

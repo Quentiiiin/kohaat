@@ -58,6 +58,12 @@ const q1 = {
 
 
 io.on("connection", (socket) => {
+
+
+    socket.on("ping", (callback) => {
+        callback();
+    });
+
     let handshake: AuthHandshake;
 
     try {
