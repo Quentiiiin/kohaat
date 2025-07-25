@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   const { endTime }: { endTime: number } = $props();
 
   let timeLeft = $state({ minutes: 0, seconds: 0, total: 0 });
@@ -22,7 +20,7 @@
     timeLeft = { minutes, seconds, total: difference };
   }
 
-  onMount(() => {
+  $effect(() => {
     updateCountdown();
     intervalId = setInterval(updateCountdown, 1000);
 
@@ -33,5 +31,7 @@
 </script>
 
 <div>
-  {timeLeft.total <= 0 ? '0:00' : `${timeLeft.minutes}:${timeLeft.seconds.toString().padStart(2, '0')}`}
+  {timeLeft.total <= 0
+    ? "0:00"
+    : `${timeLeft.minutes}:${timeLeft.seconds.toString().padStart(2, "0")}`}
 </div>

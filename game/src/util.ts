@@ -2,7 +2,7 @@ import type { Socket } from "socket.io";
 import { QuizMessageSchema, type QuizMessage } from "../../shared/schema";
 
 export function generateRandomId(): string {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const characters = "0123456789";
     let result = "";
     for (let i = 0; i < 4; i++) {
         result += characters.charAt(Math.floor(Math.random() * characters.length));

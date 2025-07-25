@@ -9,15 +9,17 @@
     const { players, kickPlayer }: Props = $props();
 </script>
 
-<div class="">
+<div class="p-4 flex justify-center flex-wrap">
     {#each players as player}
-        <button
-            class=" hover:line-through bg-red-200 w-fit px-2 py-1 rounded-md text-xl"
-            onclick={() => {
-                kickPlayer(player.id);
-            }}
-        >
-            {player.name}
-        </button>
+        {#each { length: 1 }, a}
+            <button
+                class=" hover:line-through nb-button bg-red-300 text-2xl m-1"
+                onclick={() => {
+                    kickPlayer(player.id);
+                }}
+            >
+                {player.name}
+            </button>
+        {/each}
     {/each}
 </div>

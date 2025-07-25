@@ -6,10 +6,13 @@
     import "$lib/socket";
     import { initGame, submitAnswer } from "$lib/socket";
     import { onMount } from "svelte";
+    import TopBarContainer from "$lib/components/TopBarContainer.svelte";
+    import NetworkIndicator from "$lib/components/NetworkIndicator.svelte";
 
     const { data }: { data: PageData } = $props();
 
     let username: string | null = $state(null);
+    let hasSubmittedName: boolean = $state(false);
 
     const showButtons = $derived.by(() => {
         if (!localGameState.state) return false;
@@ -30,26 +33,39 @@
     });
 </script>
 
-<div>
-    {JSON.stringify(data)}
-    connected: {localGameState.connected}
-</div>
-{#if localGameState.state?.questionEndTime}
-    <Timer endTime={localGameState.state.questionEndTime} />
-{/if}
-{JSON.stringify(localGameState.state)}
+<TopBarContainer>
+    <NetworkIndicator />
+</TopBarContainer>
 
-{#if !data.userFound && data.gameId && data.phase === "WAITING"}
-    <form
-        class=" bg-amber-300"
-        onsubmit={(event) => {
-            event.preventDefault();
-            console.log("submit");
-            if (username) initGame(false, data.gameId, username);
-        }}
-    >
-        <input bind:value={username} type="text" placeholder="your nickname" />
-    </form>
+{#if !data.userFound && !hasSubmittedName && data.phase === "WAITING"}
+    <div class=" flex items-center justify-center flex-col">
+        <h2 class=" text-4xl py-10">
+            JOIN game
+            <span class=" font-black">
+                {data.gameId}
+            </span>
+        </h2>
+        <form
+            class=" bg-red-300 nb-border flex w-fit text-2xl m-1 p-2"
+            onsubmit={(event) => {
+                event.preventDefault();
+                if (username) {
+                    initGame(false, data.gameId, username);
+                    username = "";
+                    hasSubmittedName = true;
+                }
+            }}
+        >
+            <input
+                maxlength="16"
+                class=" focus:outline-0 mx-1"
+                bind:value={username}
+                type="text"
+                placeholder="your nickname"
+            />
+            <button class=" nb-button bg-green-300 mx-1">JOIN</button>
+        </form>
+    </div>
 {/if}
 
 {#if showButtons}
@@ -61,4 +77,12 @@
             submitAnswer(i);
         }}
     />
+{/if}
+
+{#if localGameState.state}
+    {#if localGameState.state.phase === "WAITING"}
+        <div class=" text-3xl flex justify-center">
+            See your name on the screen?
+        </div>
+    {/if}
 {/if}

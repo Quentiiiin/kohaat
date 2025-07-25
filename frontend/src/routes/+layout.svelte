@@ -3,6 +3,7 @@
 	import "../app.css";
 	import { localGameState } from "$lib/game-state.svelte";
 	import type { LayoutData } from "./$types";
+    import GridBackground from "$lib/components/GridBackground.svelte";
 
 	interface Props {
 		children: Snippet<[]>;
@@ -16,4 +17,5 @@
 	});
 </script>
 
+<GridBackground />
 {@render children()}

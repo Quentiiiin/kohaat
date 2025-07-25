@@ -40,6 +40,7 @@ export async function initGame(master: boolean, gameId: string, username?: strin
         } else if (parsedMessage.kind === 'ERROR') {
             console.error('Error received from socket:', parsedMessage.payload);
         } else if (parsedMessage.kind === 'PLAYER_KICKED') {
+            localGameState.showKickedMessage = true;
             goto('/');
         }
     });

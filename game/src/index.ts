@@ -5,6 +5,7 @@ import { QuizGame } from "./QuizGame";
 import { QuizMaster } from "./QuizMaster";
 import { Hono } from "hono";
 import z from "zod";
+import { cors } from "hono/cors";
 
 const WS_PORT = 4000;
 const HTTP_PORT = 4001;
@@ -18,6 +19,7 @@ const io = new Server({
 io.listen(WS_PORT);
 
 const http = new Hono();
+http.use('/*', cors());
 http.post('/create', async (c) => {
     const parsed = z.object({ userId: z.uuid() }).safeParse(await c.req.json());
     if (!parsed.data) return c.text('validation error', 400);

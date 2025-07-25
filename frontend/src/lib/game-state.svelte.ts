@@ -4,5 +4,6 @@ export const localGameState: {
     state: QuizGameLight | null,
     connected: boolean,
     userId: string,
-    latency: number
-} = $state({ state: null, connected: false, userId: '', latency: -1 });
+    latency: number,
+    showKickedMessage: boolean
+} = $state({ state: null, connected: false, userId: '', latency: -1, showKickedMessage: false });
