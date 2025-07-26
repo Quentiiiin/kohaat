@@ -8,6 +8,7 @@
     import { onMount } from "svelte";
     import TopBarContainer from "$lib/components/TopBarContainer.svelte";
     import NetworkIndicator from "$lib/components/NetworkIndicator.svelte";
+    import BottomBar from "$lib/components/BottomBar.svelte";
 
     const { data }: { data: PageData } = $props();
 
@@ -86,3 +87,13 @@
         </div>
     {/if}
 {/if}
+
+<BottomBar>
+    {localGameState.state?.players.find((p) => p.id === localGameState.userId)
+        ?.name}
+    <div class=" bg-amber-50 px-1 nb-border m-1">
+        {localGameState.state?.players.find(
+            (p) => p.id === localGameState.userId,
+        )?.score}
+    </div>
+</BottomBar>
