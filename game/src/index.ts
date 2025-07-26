@@ -6,6 +6,7 @@ import { QuizMaster } from "./QuizMaster";
 import { Hono } from "hono";
 import z from "zod";
 import { cors } from "hono/cors";
+import { getRandomQuestions } from "./question-loader";
 
 const WS_PORT = 4000;
 const HTTP_PORT = 4001;
@@ -23,7 +24,7 @@ http.use('/*', cors());
 http.post('/create', async (c) => {
     const parsed = z.object({ userId: z.uuid() }).safeParse(await c.req.json());
     if (!parsed.data) return c.text('validation error', 400);
-    const game = new QuizGame([q1], io);
+    const game = new QuizGame(getRandomQuestions(10), io);
     const master = new QuizMaster(parsed.data.userId, game);
     game.master = master;
     games.push(game);
@@ -51,13 +52,6 @@ export default {
 
 
 const games: QuizGame[] = [];
-
-const q1 = {
-    question: 'Gubi?',
-    answers: ['fortnite', 'brawl stars'],
-    correctAnswer: 0
-}
-
 
 io.on("connection", (socket) => {
 

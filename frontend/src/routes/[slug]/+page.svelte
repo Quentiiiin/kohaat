@@ -69,11 +69,12 @@
     </div>
 {/if}
 
-{#if showButtons}
+{#if showButtons && localGameState.state}
     <AnswerButtons
-        possibleAnswerCount={(localGameState.state?.questions[
+        showAnswers={false}
+        answers={localGameState.state.questions[
             localGameState.state.currentQuestionIndex
-        ].answers.length as 2 | 3 | 4) ?? 4}
+        ].answers}
         onClick={(i) => {
             submitAnswer(i);
         }}

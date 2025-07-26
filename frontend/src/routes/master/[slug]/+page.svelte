@@ -49,10 +49,16 @@
     </TopBarContainer>
 
     {#if showButtons}
-        <AnswerButtons
-            possibleAnswerCount={(localGameState.state?.questions[
+        <div>
+            {localGameState.state?.questions[
                 localGameState.state.currentQuestionIndex
-            ].answers.length as 2 | 3 | 4) ?? 4}
+            ].question}
+        </div>
+        <AnswerButtons
+            showAnswers={true}
+            answers={localGameState.state.questions[
+                localGameState.state.currentQuestionIndex
+            ].answers}
             onClick={() => {}}
         />
     {/if}
@@ -65,7 +71,9 @@
                 <h2 class=" text-3xl">WAITING FOR PLAYERS</h2>
                 <h3>{PUBLIC_FRONTEND_ADDRESS}</h3>
                 <div>
-                    Gamecode: <span class=" font-black text-3xl">{localGameState.state.id}</span>
+                    Gamecode: <span class=" font-black text-3xl"
+                        >{localGameState.state.id}</span
+                    >
                 </div>
             </div>
             <PlayerLobby
