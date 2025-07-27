@@ -30,14 +30,13 @@
 
 {#if localGameState.state}
     <TopBarContainer>
-        {localGameState.state?.phase}
-        {#if localGameState.state?.questionEndTime}
-            <Timer endTime={localGameState.state.questionEndTime} />
-        {/if}
-        <div class=" flex w-full justify-end mr-1">
+        <div class=" flex w-full justify-end mr-1 items-center">
+            {#if localGameState.state?.questionEndTime}
+                <Timer endTime={localGameState.state.questionEndTime} />
+            {/if}
             {#if localGameState.state.phase === "WAITING"}
                 <button
-                    class=" bg-green-400 nb-button"
+                    class=" bg-green-400 nb-button ml-2"
                     onclick={() => {
                         sendMessage({ kind: "START_GAME" });
                     }}
@@ -49,7 +48,7 @@
     </TopBarContainer>
 
     {#if showButtons}
-        <div>
+        <div class=" text-4xl mx-4">
             {localGameState.state?.questions[
                 localGameState.state.currentQuestionIndex
             ].question}

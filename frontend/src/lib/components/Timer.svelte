@@ -30,7 +30,7 @@
   });
 </script>
 
-<div>
+<div class=" bg-amber-50 nb-border font-medium">
   {timeLeft.total <= 0
     ? "0:00"
     : `${timeLeft.minutes}:${timeLeft.seconds.toString().padStart(2, "0")}`}

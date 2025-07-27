@@ -19,7 +19,7 @@
 </div>
 
 {#snippet AnswerButton(answer: string, index: number)}
-    <div class=" bg-red-500 m-2 text-2xl">
+    <div class=" m-2 text-2xl">
         <button
             onclick={() => {
                 onClick(index);
