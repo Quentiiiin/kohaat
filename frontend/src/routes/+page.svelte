@@ -25,51 +25,59 @@
     </div>
 {/if}
 
-<div class="bg-red-300 nb-border flex w-fit text-2xl m-1 p-2 flex-col">
-    <form
-        class=""
-        onsubmit={async (event) => {
-            event.preventDefault();
-            if (gameId) {
-                const status = await getGameStatus(
-                    gameId,
-                    localGameState.userId,
-                );
-                if (status.found && status.phase === "WAITING") {
-                    goto("/" + gameId);
-                    gameId = "";
-                    codeError = "";
-                } else if (
-                    status.found &&
-                    status.phase === "PLAY" &&
-                    status.userFound
-                ) {
-                    goto("/" + gameId);
-                    gameId = "";
-                    codeError = "";
+<div class=" flex w-screen items-center justify-center flex-col mt-15">
+    <h1 class=" text-7xl font-black">Kohaat</h1>
+    <div class="bg-red-300 nb-border flex w-fit text-2xl m-1 p-2 flex-col">
+        <form
+            class=""
+            onsubmit={async (event) => {
+                event.preventDefault();
+                if (gameId) {
+                    const status = await getGameStatus(
+                        gameId,
+                        localGameState.userId,
+                    );
+                    if (status.found && status.phase === "WAITING") {
+                        goto("/" + gameId);
+                        gameId = "";
+                        codeError = "";
+                    } else if (
+                        status.found &&
+                        status.phase === "PLAY" &&
+                        status.userFound
+                    ) {
+                        goto("/" + gameId);
+                        gameId = "";
+                        codeError = "";
+                    }
+                    if (!status.found) {
+                        codeError = "game not found";
+                    } else if (status.phase !== "WAITING") {
+                        codeError = "game already started";
+                    }
                 }
-                if (!status.found) {
-                    codeError = "game not found";
-                } else if (status.phase !== "WAITING") {
-                    codeError = "game already started";
-                }
-            }
-        }}
-    >
-        <input
-            oninput={() => (codeError = "")}
-            maxlength="4"
-            class=" focus:outline-0 mx-1"
-            bind:value={gameId}
-            inputmode="numeric"
-            type="text"
-            placeholder="game ID"
-        />
-        <button class=" nb-button bg-green-300 mx-1">JOIN</button>
-    </form>
-    <div class=" text-xl">
-        {codeError}
+            }}
+        >
+            <input
+                oninput={() => (codeError = "")}
+                maxlength="4"
+                class=" focus:outline-0 mx-1"
+                bind:value={gameId}
+                inputmode="numeric"
+                type="text"
+                placeholder="game ID"
+            />
+            <button class=" nb-button bg-green-300 mx-1">JOIN</button>
+        </form>
+        <div class=" text-xl">
+            {codeError}
+        </div>
+    </div>
+
+    <div class=" text-2xl mt-5">
+        or
+        <a href="/create" class=" nb-button bg-green-300">
+            create game
+        </a>
     </div>
 </div>
-
-<a href="/create" class=" nb-button text-2xl bg-green-300"> create game </a>
