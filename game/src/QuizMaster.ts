@@ -32,7 +32,11 @@ export class QuizMaster {
             if (parsed.kind === 'START_GAME') {
                 this.game.start();
             } else if (parsed.kind === 'NEXT_QUESTION') {
-                this.game.nextQuestion();
+                if(this.game.showScoreboard) {
+                    this.game.nextQuestion();
+                } else {
+                    this.game.showScoreboardScreen();
+                }
             } else if (parsed.kind === 'KICK_PLAYER') {
                 this.game.kick(parsed.payload);
             } else if (parsed.kind === 'END_GAME') {

@@ -31,7 +31,8 @@ export const QuizGameLightSchema = z.object({
     questionEndTime: z.number(),
     currentQuestionIndex: z.number(),
     questions: z.array(QuizQuestionSchema),
-    totalQuestions: z.number()
+    totalQuestions: z.number(),
+    showScoreboard: z.boolean(),
 });
 
 export type QuizGameLight = z.infer<typeof QuizGameLightSchema>;

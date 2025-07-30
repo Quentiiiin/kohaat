@@ -15,6 +15,7 @@ export class QuizGame {
     io: Server;
     questionTimeout: NodeJS.Timeout | null = null;
     hasAppliedScores: boolean = false;
+    showScoreboard: boolean = false;
 
     master: QuizMaster | null = null;
 
@@ -35,6 +36,20 @@ export class QuizGame {
         this.nextQuestion();
     }
 
+    showScoreboardScreen() {
+        if (!this.hasAppliedScores) this.applyScores();
+        if (this.phase !== 'PLAY') return;
+        if (this.currentQuestionIndex >= this.questions.length - 1) {
+            //all questions done
+            this.phase = 'END';
+            this.updateGameState();
+            return;
+        };
+        this.showScoreboard = true;
+        this.questionTimeout?.close();
+        this.updateGameState();
+    }
+
     nextQuestion() {
         if (!this.hasAppliedScores) this.applyScores();
         if (this.phase !== 'PLAY') return;
@@ -44,7 +59,7 @@ export class QuizGame {
             this.updateGameState();
             return;
         };
-
+        this.showScoreboard = false;
         this.questionTimeout?.close();
 
         this.currentQuestionIndex++;
@@ -53,7 +68,8 @@ export class QuizGame {
         this.hasAppliedScores = false;
 
         this.questionTimeout = setTimeout(() => {
-            this.nextQuestion();
+            this.showScoreboard = true;
+            this.updateGameState();
         }, 1000 * 10);
         this.updateGameState();
     }
@@ -125,7 +141,8 @@ export class QuizGame {
                 currentQuestionIndex: this.currentQuestionIndex,
                 questions: strippedQuestions,
                 totalQuestions: this.questions.length,
-                players: lightPlayers
+                players: lightPlayers,
+                showScoreboard: this.showScoreboard
             }
         }
         this.io.to(this.id).emit("game", JSON.stringify(message));

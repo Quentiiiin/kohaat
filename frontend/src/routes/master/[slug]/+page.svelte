@@ -12,14 +12,13 @@
     import PlayerLobby from "$lib/components/PlayerLobby.svelte";
     import TopBarContainer from "$lib/components/TopBarContainer.svelte";
     import { PUBLIC_FRONTEND_ADDRESS } from "$env/static/public";
+    import Scoreboard from "$lib/components/Scoreboard.svelte";
 
-    const showButtons = $derived.by(() => {
-        if (!localGameState.state) return false;
-        if (localGameState.state.phase !== "PLAY") return false;
-        if (localGameState.state.questionEndTime < new Date().getTime())
-            return false;
-        return true;
-    });
+    const showButtons = $derived(
+        localGameState.state &&
+            !(localGameState.state.questionEndTime < new Date().getTime()) &&
+            !localGameState.state.showScoreboard,
+    );
 
     onMount(async () => {
         await tick();
@@ -28,21 +27,27 @@
     });
 </script>
 
+{#snippet greenButton(text: string, onClick: () => void)}
+    <button class=" bg-green-400 nb-button ml-2" onclick={onClick}>
+        {text}
+    </button>
+{/snippet}
+
 {#if localGameState.state}
     <TopBarContainer>
         <div class=" flex w-full justify-end mr-1 items-center">
-            {#if localGameState.state?.questionEndTime}
+            {#if showButtons}
                 <Timer endTime={localGameState.state.questionEndTime} />
             {/if}
             {#if localGameState.state.phase === "WAITING"}
-                <button
-                    class=" bg-green-400 nb-button ml-2"
-                    onclick={() => {
-                        sendMessage({ kind: "START_GAME" });
-                    }}
-                >
-                    START
-                </button>
+                {@render greenButton("Start", () => {
+                    sendMessage({ kind: "START_GAME" });
+                })}
+            {/if}
+            {#if localGameState.state.phase === "PLAY"}
+                {@render greenButton("Next", () => {
+                    sendMessage({ kind: "NEXT_QUESTION" });
+                })}
             {/if}
         </div>
     </TopBarContainer>
@@ -60,6 +65,12 @@
             ].answers}
             onClick={() => {}}
         />
+    {/if}
+    {#if localGameState.state.showScoreboard}
+    <div class=" text-4xl text-red-500">
+        Scoreboard
+    </div>
+        <Scoreboard players={localGameState.state.players} />
     {/if}
 
     {#if localGameState.state?.phase === "WAITING"}

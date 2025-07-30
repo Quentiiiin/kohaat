@@ -24,6 +24,7 @@
             (p) => p.id === localGameState.userId,
         );
         if (!player || player.submittedAnswer) return false;
+        if (localGameState.state.showScoreboard) return false;
         return true;
     });
 
