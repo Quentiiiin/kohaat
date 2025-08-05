@@ -13,6 +13,7 @@
     import TopBarContainer from "$lib/components/TopBarContainer.svelte";
     import { PUBLIC_FRONTEND_ADDRESS } from "$env/static/public";
     import Scoreboard from "$lib/components/Scoreboard.svelte";
+    import GameQr from "$lib/components/GameQr.svelte";
 
     const showButtons = $derived(
         localGameState.state &&
@@ -82,6 +83,7 @@
                         >{localGameState.state.id}</span
                     >
                 </div>
+                <GameQr gameId={localGameState.state.id} />
             </div>
             <PlayerLobby
                 players={localGameState.state.players}
