@@ -67,9 +67,6 @@
         />
     {/if}
     {#if localGameState.state.showScoreboard}
-    <div class=" text-4xl text-red-500">
-        Scoreboard
-    </div>
         <Scoreboard players={localGameState.state.players} />
     {/if}
 

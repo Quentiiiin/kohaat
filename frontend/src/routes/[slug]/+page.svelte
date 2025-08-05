@@ -36,7 +36,7 @@
 </script>
 
 <TopBarContainer>
-    <NetworkIndicator />
+    <span class=" font-bold">{data.gameId}</span>
 </TopBarContainer>
 
 {#if !data.userFound && !hasSubmittedName && data.phase === "WAITING"}
