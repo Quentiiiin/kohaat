@@ -6,7 +6,7 @@ export const actions = {
     default: async (event) => {
         const data = await event.request.formData();
         const userId = data.get('userId');
-        const res = await fetch(PUBLIC_GAME_HTTP_URL + '/create', {
+        const res = await fetch(PUBLIC_GAME_HTTP_URL + '/game-api/create', {
             method: 'POST', body: JSON.stringify({
                 userId
             })

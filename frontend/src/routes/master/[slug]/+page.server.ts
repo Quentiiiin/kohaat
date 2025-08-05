@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 export const load = (async ({ params }) => {
     const gameId = params.slug;
 
-    const res = await fetch(PUBLIC_GAME_HTTP_URL + '/game-status/' + gameId);
+    const res = await fetch(PUBLIC_GAME_HTTP_URL + '/game-api/game-status/' + gameId);
     if (!res.ok) {
         return {
             error: true

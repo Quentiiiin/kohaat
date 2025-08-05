@@ -6,7 +6,7 @@ export const load = (async ({ params, cookies }) => {
     const gameId = params.slug;
     const userId = cookies.get('kh-userId') ?? 'nouser';
 
-    const res = await fetch(PUBLIC_GAME_HTTP_URL + '/game-status/' + gameId + '/' + userId);
+    const res = await fetch(PUBLIC_GAME_HTTP_URL + '/game-api/game-status/' + gameId + '/' + userId);
     if (!res.ok) {
         return {
             error: true

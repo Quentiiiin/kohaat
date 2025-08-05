@@ -25,6 +25,7 @@ export async function initGame(master: boolean, gameId: string, username?: strin
     const handshake = master ? handshakeMaster : handshakePlayer;
 
     gameSocket = io(PUBLIC_GAME_SOCKET_URL, {
+        path: '/game-socket/',
         auth: handshake
     });
 

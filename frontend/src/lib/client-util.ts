@@ -2,7 +2,7 @@ import { PUBLIC_GAME_HTTP_URL } from "$env/static/public";
 import type { QuizPhase } from "$shared/schema";
 
 export async function getGameStatus(gameId: string, userId: string) {
-    const res = await (fetch(PUBLIC_GAME_HTTP_URL + '/game-status/' + gameId + '/' + userId));
+    const res = await (fetch(PUBLIC_GAME_HTTP_URL + '/game-api/game-status/' + gameId + '/' + userId));
     if (!res.ok) {
         return {
             found: false,

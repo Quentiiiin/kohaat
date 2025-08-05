@@ -12,6 +12,7 @@ const WS_PORT = 4000;
 const HTTP_PORT = 4001;
 
 const io = new Server({
+    path: '/game-socket/',
     cors: {
         origin: 'http://localhost:5173'
     }
@@ -21,7 +22,7 @@ io.listen(WS_PORT);
 
 const http = new Hono();
 http.use('/*', cors());
-http.post('/create', async (c) => {
+http.post('/game-api/create', async (c) => {
     const parsed = z.object({ userId: z.uuid() }).safeParse(await c.req.json());
     if (!parsed.data) return c.text('validation error', 400);
     const game = new QuizGame(getRandomQuestions(10), io);
@@ -30,7 +31,7 @@ http.post('/create', async (c) => {
     games.push(game);
     return c.json({ gameId: game.id });
 });
-http.get('/game-status/:gameId/:userId?', (c) => {
+http.get('/game-api/game-status/:gameId/:userId?', (c) => {
     const game = games.find(g => g.id === c.req.param('gameId'));
     if (!game) return c.text('game not found', 404);
     const userId = c.req.param('userId')
